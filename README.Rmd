@@ -1,0 +1,87 @@
+---
+output: rmarkdown::github_document
+---
+```{r include=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, echo = TRUE,
+                      dev="png", fig.retina = 2, fig.width = 10, fig.height = 6)
+```
+# misinfo
+
+Tools to Perform 'Misinformation' Analysis on a Text Corpus
+
+## Description
+
+Tools to Perform 'Misinformation' Analysis on a Text Corpus
+
+## What's Inside The Tin
+
+The following functions are implemented:
+
+- `mi_analyze_document`:	Run a one or more documents through a misinformation/bias sentiment analysis
+- `mi_plot_document_summary`:	Plot raw frequency count summary from a processed corpus
+- `mi_plot_individual_frequency`:	Plot raw frequency count summary from a processed corpus
+- `mi_use_builtin`:	Use a built-in 'sentiment' word/phrase list
+- `word_doc_to_txt`:	Convert a Word document to a plaintext document
+
+## Installation
+
+```{r eval=FALSE}
+devtools::install_github("hrbrmstr/misinfo")
+```
+
+```{r message=FALSE, warning=FALSE, error=FALSE, include=FALSE}
+options(width=120)
+```
+
+## Usage
+
+```{r message=FALSE, warning=FALSE, error=FALSE}
+library(misinfo)
+library(tidyverse)
+
+# current verison
+packageVersion("misinfo")
+
+```
+
+### Try it out on the built-in corpus
+
+```{r}
+mi_analyze_document(
+  path = system.file("extdat", package="misinfo"),
+  pattern = ".*txt$",
+  bias_type = "explanatory",
+  sentiment_list = mi_use_builtin("explanatory")
+) -> corpus
+```
+
+```{r}
+glimpse(corpus)
+```
+
+```{r}
+corpus$frequency_summary
+```
+
+```{r}
+corpus$individual_frequency
+```
+
+```{r fig.height=8}
+mi_plot_individual_frequency(corpus)
+```
+
+```{r fig.height=8}
+mi_plot_individual_frequency(corpus, FALSE)
+```
+
+```{r}
+mi_plot_document_summary(corpus)
+```
+
+```{r}
+mi_plot_document_summary(corpus, FALSE)
+```
+
+
+

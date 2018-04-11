@@ -1,0 +1,31 @@
+Package: misinfo
+Type: Package
+Title: Tools to Perform 'Misinformation' Analysis on a Text Corpus
+Version: 0.1.0
+Date: 2018-04-11
+Authors@R: c(
+    person("Bob", "Rudis", email = "bob@rud.is", role = c("aut", "cre"), 
+           comment = c(ORCID = "0000-0001-5670-2640"))
+  )
+Maintainer: Bob Rudis <bob@rud.is>
+Description: Tools to Perform 'Misinformation' Analysis on a Text Corpus.
+URL: https://github.com/hrbrmstr/misinfo
+BugReports: https://github.com/hrbrmstr/misinfo/issues
+Encoding: UTF-8
+License: MIT + file LICENSE
+Suggests:
+    testthat,
+    covr
+Depends:
+    R (>= 3.2.0)
+Imports:
+    processx,
+    stringi,
+    tidytext,
+    tools,
+    dplyr,
+    purrr,
+    ggplot2,
+    viridis,
+    hrbrthemes
+RoxygenNote: 6.0.1.9000
