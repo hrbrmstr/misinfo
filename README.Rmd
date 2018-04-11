@@ -37,6 +37,7 @@ options(width=120)
 
 ```{r message=FALSE, warning=FALSE, error=FALSE}
 library(misinfo)
+library(hrbrthemes)
 library(tidyverse)
 
 # current verison
@@ -83,5 +84,34 @@ mi_plot_document_summary(corpus)
 mi_plot_document_summary(corpus, FALSE)
 ```
 
+### Compare a corpus across a bunch of biases
 
+```{r}
+
+map_df(c("uncertainty", "sourcing", "retractors", "explanatory"), ~{
+  
+  # compute individual bias scores
+  mi_analyze_document(
+    path = system.file("extdat", package="misinfo"),
+    pattern = ".*txt$",
+    bias_type = .x,
+    sentiment_list = mi_use_builtin(.x)
+  ) -> corpus
+  
+ mutate(corpus$frequency_summary, bias = corpus$bias_type)
+  
+}) -> biases
+
+mutate(biases, pct = ifelse(pct == 0, NA, pct)) %>% 
+  ggplot(aes(sprintf("Doc #%s", doc_num), bias, fill=pct)) +
+  geom_tile(color="#2b2b2b", size=0.125) +
+  scale_x_discrete(expand=c(0,0)) +
+  scale_y_discrete(expand=c(0,0)) +
+  viridis::scale_fill_viridis(direction=-1, na.value="white") +
+  labs(x=NULL, y=NULL, title="Word List Usage Heatmap (normalized)") +
+  theme_ipsum_rc(grid="")
+
+distinct(biases, doc_num, doc_id, total_words) %>% 
+  knitr::kable(format="markdown")
+```
 

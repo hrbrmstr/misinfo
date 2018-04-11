@@ -30,6 +30,7 @@ devtools::install_github("hrbrmstr/misinfo")
 
 ``` r
 library(misinfo)
+library(hrbrthemes)
 library(tidyverse)
 
 # current verison
@@ -131,3 +132,47 @@ mi_plot_document_summary(corpus, FALSE)
 ```
 
 <img src="README_files/figure-gfm/unnamed-chunk-12-1.png" width="960" />
+
+### Compare a corpus across a bunch of biases
+
+``` r
+map_df(c("uncertainty", "sourcing", "retractors", "explanatory"), ~{
+  
+  # compute individual bias scores
+  mi_analyze_document(
+    path = system.file("extdat", package="misinfo"),
+    pattern = ".*txt$",
+    bias_type = .x,
+    sentiment_list = mi_use_builtin(.x)
+  ) -> corpus
+  
+ mutate(corpus$frequency_summary, bias = corpus$bias_type)
+  
+}) -> biases
+
+mutate(biases, pct = ifelse(pct == 0, NA, pct)) %>% 
+  ggplot(aes(sprintf("Doc #%s", doc_num), bias, fill=pct)) +
+  geom_tile(color="#2b2b2b", size=0.125) +
+  scale_x_discrete(expand=c(0,0)) +
+  scale_y_discrete(expand=c(0,0)) +
+  viridis::scale_fill_viridis(direction=-1, na.value="white") +
+  labs(x=NULL, y=NULL, title="Word List Usage Heatmap (normalized)") +
+  theme_ipsum_rc(grid="")
+```
+
+<img src="README_files/figure-gfm/unnamed-chunk-13-1.png" width="960" />
+
+``` r
+distinct(biases, doc_num, doc_id, total_words) %>% 
+  knitr::kable(format="markdown")
+```
+
+| doc\_id                        | doc\_num | total\_words |
+| :----------------------------- | :------- | -----------: |
+| CNET - How US cybersleuths dec | 1        |         1327 |
+| CNN - DNC hack                 | 2        |         1024 |
+| IVN - CNN Covering For DNC Cor | 3        |          880 |
+| Red Nation- FBI Didn’t Analyze | 4        |          377 |
+| The Nation - A New Report Rais | 5        |         5119 |
+| VOA- Think Tank- Cyber Firm at | 6        |         1430 |
+| WaPo - DNC hack                | 7        |         1694 |
